@@ -31,10 +31,22 @@ class _ManagerHomeScreenState extends State<ManagerHomeScreen> {
         currentIndex: _index,
         type: BottomNavigationBarType.fixed,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.content_cut), label: "Services"),
-          BottomNavigationBarItem(icon: Icon(Icons.group_outlined), label: "Staff"),
-          BottomNavigationBarItem(icon: Icon(Icons.calendar_month), label: "Bookings"),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            label: "Home",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.content_cut),
+            label: "Services",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.group_outlined),
+            label: "Staff",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_month),
+            label: "Bookings",
+          ),
           BottomNavigationBarItem(icon: Icon(Icons.logout), label: "Logout"),
         ],
         onTap: (i) {
@@ -83,18 +95,15 @@ class _HomeContent extends StatelessWidget {
           const SizedBox(height: 20),
 
           // Info rapide : chiffres clés
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          ),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween),
           const SizedBox(height: 20),
 
           // Section présentation du salon
           Text(
             "À propos d’ISA Barber",
-            style: Theme.of(context)
-                .textTheme
-                .titleMedium
-                ?.copyWith(fontWeight: FontWeight.bold),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 10),
           Container(
@@ -107,13 +116,13 @@ class _HomeContent extends StatelessWidget {
                   color: Colors.black12.withOpacity(0.05),
                   blurRadius: 12,
                   offset: const Offset(0, 6),
-                )
+                ),
               ],
             ),
             child: const Text(
               "ISA Barber est votre salon de coiffure premium pour hommes et femmes, "
-                  "offrant des services professionnels, des coiffeurs spécialisés et "
-                  "une expérience de qualité pour tous nos clients.",
+              "offrant des services professionnels, des coiffeurs spécialisés et "
+              "une expérience de qualité pour tous nos clients.",
               style: TextStyle(height: 1.4, color: Colors.black87),
             ),
           ),
@@ -170,9 +179,15 @@ class _InfoCard extends StatelessWidget {
               child: Icon(icon, color: Colors.white),
             ),
             const SizedBox(height: 8),
-            Text(value,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            Text(title, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12)),
+            Text(
+              value,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 12),
+            ),
           ],
         ),
       ),
