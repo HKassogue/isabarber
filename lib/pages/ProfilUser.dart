@@ -118,7 +118,46 @@ class Profiluser extends StatelessWidget {
                 ),
               ),
             ),
+
           ),
+          const SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.only(left: 20 , right: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Upcoming Appointments",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+
+                ],
+              ),
+            ),
+          ),
+          SliverPadding(padding: const EdgeInsets.only(left: 20 , right: 20),
+          sliver: SliverList(
+            delegate: SliverChildListDelegate(
+              [
+                __AppointmentCard("Haircut", "with Sarah Smith", "Confirmed", "35", "Feb 12 , 2026"),
+                __AppointmentCard("Hair Coloring", "With Mike Johson", "Pending", "85.00", "Mars 15  2026 , 2:00 PM"),
+                __AppointmentCard("Massge", "with Fatoumata", "Confirmed", "100", "Mars 24  2026 14h")
+              ]
+            ),
+
+            ),
+          ),
+
+          SliverPadding(padding: const EdgeInsets.only(bottom: 20),
+          sliver: SliverToBoxAdapter(
+            child: Container(),
+          ),
+          )
+
+
         ],
       ),
     );
@@ -164,4 +203,89 @@ class Profiluser extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget __AppointmentCard(String title, String subtitle , String status , String price , String date ){
+
+  return Container(
+    margin: const EdgeInsets.only(bottom: 8 , top: 12),
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: tdBGColor,
+      borderRadius: BorderRadius.circular(12)
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title ,style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.w600,
+                fontSize: 16
+            ),),
+            Container(
+              padding: EdgeInsets.all(3),
+              decoration: BoxDecoration(
+                  color: status == "Confirmed"
+                      ? Colors.green      // Vert pour confirmé
+                      : status == "Pending"
+                      ? Colors.orange  // Orange pour en attente
+                      : Colors.red,
+                  borderRadius: BorderRadius.circular(20)
+              ),
+              child: Text(status , style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w200,
+                  fontSize: 12
+              ),),
+            )
+          ],
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(subtitle , style: TextStyle(
+              color: Colors.black45 ,
+              fontSize: 14,
+            ),),
+            SizedBox(height: 6,),
+            Row(
+              children: [
+                Icon(Icons.calendar_today , size: 20,),
+                SizedBox(width: 5,),
+                Text(date , style: TextStyle(
+                  color: Colors.black ,
+                  fontSize: 14,
+                ),),
+
+              ],
+            ),
+            SizedBox(height: 10,),
+            Divider(),
+            Row(
+
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(price , style: TextStyle(
+                  color: Colors.black ,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 17,
+                ),),
+                TextButton(onPressed: (){}, child: Text("Cancel" , style: TextStyle(
+                  color: Colors.redAccent ,
+                  fontSize: 13,
+                ),))
+              ],
+            )
+          ],
+
+        ),
+
+      ],
+    ),
+  );
 }
