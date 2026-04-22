@@ -2,6 +2,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:isabarder/BottonNavigation.dart';
 import 'package:isabarder/constants/colors.dart';
+import 'package:isabarder/pages/Service.dart';
+import 'package:isabarder/pages/ServiceDetails.dart';
 
 class ActivityCard {
   final String title;
@@ -153,7 +155,7 @@ class Welcomepage extends StatelessWidget {
                 ),
               ),
               //LISTES DES SERVICES DEROULANTES
-              ServiceList(),
+              ServiceCategory(),
               // SERVICES POPULAIRES
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -238,53 +240,6 @@ class Welcomepage extends StatelessWidget {
                 icon: Icon(Icons.favorite_border_outlined),
               ),
             ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildServiceCard(
-    String title,
-    String price,
-    IconData icon,
-    Color color,
-    String imagePath,
-  ) {
-    return Container(
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-
-        children: [
-          Container(
-            width: 70,
-            height: 70,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: color.withOpacity(0.1),
-            ),
-            child: Icon(icon, color: color, size: 30),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            title,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 5),
-          Text(
-            price,
-            style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
           ),
         ],
       ),
@@ -381,39 +336,57 @@ Widget _buildActivityCard(ActivityCard card) {
 
 // service section
 
-class ServiceList extends StatefulWidget {
-  const ServiceList({super.key});
+class ServiceCategory extends StatefulWidget {
+  const ServiceCategory({super.key});
 
   @override
-  State<ServiceList> createState() => _ServiceListState();
+  State<ServiceCategory> createState() => _ServiceCategoryState();
 }
 
-class _ServiceListState extends State<ServiceList> {
-  List ServiceList = [
-    {"title": "Coifffure", "image": "assets/images/barber1.png"},
-    {"title": "Alassane", "image": "assets/images/barber2.png"},
-
-    {"title": "Marley", "image": "assets/images/barber3.png"},
-
-    {"title": "Bintou", "image": "assets/images/barber4.png"},
-
-    {"title": "General", "image": "assets/images/massage.png"},
-
-    {"title": "Maimouna", "image": "assets/images/voile.png"},
+class _ServiceCategoryState extends State<ServiceCategory> {
+  // ✅ Renomme la variable pour éviter la confusion
+  final List<ServiceList> categories = [
+    ServiceList(
+      title: "Coiffure",
+      image: "assets/images/barber1.png",
+      rating: 4.5,
+      reviews: 120,
+      duration: "45 min",
+      price: "5000",
+      description: "Service de coiffure moderne avec finition soignée.",
+    ),
+    ServiceList(
+      title: "Coiffure classique",
+      image: "assets/images/barber2.png",
+      rating: 4.2,
+      reviews: 80,
+      duration: "30 min",
+      price: "3000",
+      description: "Coupe classique adaptée à tous les styles.",
+    ),
+    ServiceList(
+      title: "Soins du visage",
+      image: "assets/images/soin.jpg",
+      rating: 4.8,
+      reviews: 150,
+      duration: "60 min",
+      price: "7000",
+      description: "Nettoyage et hydratation complète du visage.",
+    ),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(4),
+      padding: const EdgeInsets.all(4),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            margin: EdgeInsets.only(left: 20),
-            child: Text(
-              "SERVICES - CATEGORIE",
+            margin: const EdgeInsets.only(left: 20),
+            child: const Text(
+              "SERVICES - CATÉGORIES",
               style: TextStyle(
                 fontSize: 17,
                 fontWeight: FontWeight.w800,
@@ -421,36 +394,46 @@ class _ServiceListState extends State<ServiceList> {
               ),
             ),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
-              children: ServiceList.map((toElement) {
-                return Column(
-                  children: [
-                    Container(
-                      width: 95,
-                      height: 95,
-                      decoration: BoxDecoration(
-                        color: tdRed.withOpacity(0.2),
-                        shape: BoxShape.circle,
+              children: categories.map((service) {
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ServiceDetail(service: service),
                       ),
-                      padding: const EdgeInsets.all(5),
-                      margin: const EdgeInsets.only(left: 10),
-                      child: CircleAvatar(
-                        radius: 20,
-                        backgroundImage: AssetImage(toElement["image"]),
+                    );
+                  },
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 85,
+                        height: 85,
+                        decoration: BoxDecoration(
+                          color: tdRed.withOpacity(0.2),
+                          shape: BoxShape.circle,
+                        ),
+                        padding: const EdgeInsets.all(5),
+                        margin: const EdgeInsets.only(left: 10, right: 10),
+                        child: CircleAvatar(
+                          radius: 35,
+                          backgroundImage: AssetImage(service.image),
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      toElement["title"],
-                      style: TextStyle(
-                        fontWeight: FontWeight.w300,
-                        fontSize: 15,
+                      const SizedBox(height: 4),
+                      Text(
+                        service.title,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 13,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 );
               }).toList(),
             ),

@@ -54,6 +54,15 @@ class Service extends StatelessWidget {
       rating: 4.9,
       reviews: 200,
     ),
+    ServiceList(
+      image: "assets/images/soin.jpg",
+      title: "Soin Vissage",
+      price: "7500",
+      description: "Pack complet coupe + barbe avec soin",
+      duration: "1h 15min",
+      rating: 4.9,
+      reviews: 200,
+    ),
   ];
 
   @override
@@ -277,7 +286,8 @@ class Service extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (__) => PriseRendezVous(),
+                              builder: (__) =>
+                                  PriseRendezVous(selectedService: service),
                             ),
                           );
                         },

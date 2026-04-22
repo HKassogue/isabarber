@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // Pour formater les dates
 import 'package:isabarder/constants/colors.dart';
+import 'Service.dart';
 
 class PriseRendezVous extends StatefulWidget {
-  final String?
-  serviceNom; // Optionnel : si l'utilisateur vient depuis un service spécifique
+  final ServiceList?
+  selectedService; // Optionnel : si l'utilisateur vient depuis un service spécifique
   final double? servicePrix;
 
-  const PriseRendezVous({super.key, this.serviceNom, this.servicePrix});
+  const PriseRendezVous({super.key, this.servicePrix, this.selectedService});
 
   @override
   State<PriseRendezVous> createState() => _PriseRendezVousState();
@@ -15,39 +16,15 @@ class PriseRendezVous extends StatefulWidget {
 
 class _PriseRendezVousState extends State<PriseRendezVous> {
   // Sélections
-  String? selectedService;
+
+  String? selectedServiceNom;
+  String? selectedServicePrix;
   String? selectedCoiffeur;
   DateTime? selectedDate;
   TimeOfDay? selectedTime;
   String? selectedHeure;
 
   // Données
-  final List<ServiceItem> services = [
-    ServiceItem(
-      "Coupe Classique",
-      "Coupe homme/femme",
-      5000,
-      45,
-      Icons.content_cut,
-    ),
-    ServiceItem("Taille de Barbe", "Taille + soin", 3000, 30, Icons.face),
-    ServiceItem(
-      "Coupe + Barbe",
-      "Pack complet",
-      7500,
-      75,
-      Icons.cleaning_services,
-    ),
-    ServiceItem(
-      "Coloration",
-      "Coloration naturelle",
-      15000,
-      90,
-      Icons.color_lens,
-    ),
-    ServiceItem("Brushing", "Brushing professionnel", 4000, 30, Icons.air),
-    ServiceItem("Soin Capillaire", "Soin nourrissant", 8000, 45, Icons.spa),
-  ];
 
   final List<Coiffeur> coiffeurs = [
     Coiffeur(
@@ -84,8 +61,9 @@ class _PriseRendezVousState extends State<PriseRendezVous> {
   @override
   void initState() {
     super.initState();
-    if (widget.serviceNom != null) {
-      selectedService = widget.serviceNom;
+    if (widget.selectedService != null) {
+      selectedServiceNom = widget.selectedService!.title;
+      selectedServicePrix = widget.selectedService!.price;
     }
   }
 
@@ -103,7 +81,10 @@ class _PriseRendezVousState extends State<PriseRendezVous> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildServiceSection(),
+                  if (widget.selectedService != null)
+                    _buildSelectedService()
+                  else
+                    _buildServiceSection(),
                   const SizedBox(height: 24),
                   _buildCoiffeurSection(),
                   const SizedBox(height: 24),
@@ -185,7 +166,98 @@ class _PriseRendezVousState extends State<PriseRendezVous> {
     );
   }
 
+  Widget _buildSelectedService() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "💇‍♂️ Service sélectionné",
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 12),
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: tdblueWithopacity.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: tdblueWithopacity),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.selectedService!.title,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    widget.selectedService!.duration,
+                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                  ),
+                ],
+              ),
+              Text(
+                "${widget.selectedService!.price} FCFA",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: tdblueWithopacity,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildServiceSection() {
+    // Utilise ta liste de ServiceList (celle avec image, title, price, etc.)
+    final List<ServiceList> services = [
+      ServiceList(
+        image: "assets/images/barber1.png",
+        title: "Coupe Classique",
+        price: "5000",
+        description: "Coupe homme avec shampoing et coiffage",
+        duration: "45 min",
+        rating: 4.8,
+        reviews: 120,
+      ),
+      ServiceList(
+        image: "assets/images/barber2.png",
+        title: "Taille de Barbe",
+        price: "3000",
+        description: "Taille de barbe au ciseau + soin",
+        duration: "30 min",
+        rating: 4.6,
+        reviews: 85,
+      ),
+      ServiceList(
+        image: "assets/images/barber3.png",
+        title: "Coupe + Barbe",
+        price: "7500",
+        description: "Pack complet coupe + barbe avec soin",
+        duration: "1h 15min",
+        rating: 4.9,
+        reviews: 200,
+      ),
+      ServiceList(
+        image: "assets/images/soin.jpg",
+        title: "Soin Vissage",
+        price: "7500",
+        description: "Soin visage complet",
+        duration: "1h",
+        rating: 4.7,
+        reviews: 95,
+      ),
+    ];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -195,21 +267,22 @@ class _PriseRendezVousState extends State<PriseRendezVous> {
         ),
         const SizedBox(height: 12),
         SizedBox(
-          height: 110,
+          height: 130,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: services.length,
             itemBuilder: (context, index) {
               final service = services[index];
-              final isSelected = selectedService == service.nom;
+              final isSelected = selectedServiceNom == service.title;
               return GestureDetector(
                 onTap: () {
                   setState(() {
-                    selectedService = service.nom;
+                    selectedServiceNom = service.title;
+                    selectedServicePrix = service.price;
                   });
                 },
                 child: Container(
-                  width: 140,
+                  width: 160,
                   margin: const EdgeInsets.only(right: 12),
                   decoration: BoxDecoration(
                     color: isSelected ? tdblueWithopacity : Colors.white,
@@ -218,37 +291,83 @@ class _PriseRendezVousState extends State<PriseRendezVous> {
                       color: isSelected ? tdblueWithopacity : Colors.grey[200]!,
                       width: isSelected ? 2 : 1,
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.05),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
                   ),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(
-                        service.icon,
-                        size: 32,
-                        color: isSelected ? Colors.white : tdblueWithopacity,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        service.nom,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                          color: isSelected ? Colors.white : Colors.black87,
+                      ClipRRect(
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(16),
+                        ),
+                        child: Image.asset(
+                          service.image,
+                          height: 70,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              height: 70,
+                              color: Colors.grey[200],
+                              child: const Icon(
+                                Icons.image,
+                                color: Colors.grey,
+                              ),
+                            );
+                          },
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        "${service.prix} FCFA",
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: isSelected ? Colors.white70 : Colors.grey[600],
+                      Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              service.title,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                                color: isSelected
+                                    ? Colors.white
+                                    : Colors.black87,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 2),
+                            Row(
+                              children: [
+                                Text(
+                                  "${service.price} FCFA",
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w500,
+                                    color: isSelected
+                                        ? Colors.white70
+                                        : tdblueWithopacity,
+                                  ),
+                                ),
+                                const Spacer(),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.star,
+                                      size: 10,
+                                      color: Colors.amber,
+                                    ),
+                                    Text(
+                                      service.rating.toString(),
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        color: isSelected
+                                            ? Colors.white70
+                                            : Colors.grey[600],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -464,7 +583,7 @@ class _PriseRendezVousState extends State<PriseRendezVous> {
   }
 
   Widget _buildResumeSection() {
-    if (selectedService == null &&
+    if (selectedServiceNom == null &&
         selectedCoiffeur == null &&
         selectedDate == null &&
         selectedHeure == null) {
@@ -486,8 +605,8 @@ class _PriseRendezVousState extends State<PriseRendezVous> {
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
-          if (selectedService != null) ...[
-            _buildResumeItem(Icons.content_cut, "Service", selectedService!),
+          if (selectedServiceNom != null) ...[
+            _buildResumeItem(Icons.content_cut, "Service", selectedServiceNom!),
             const SizedBox(height: 8),
           ],
           if (selectedCoiffeur != null) ...[
@@ -534,7 +653,7 @@ class _PriseRendezVousState extends State<PriseRendezVous> {
 
   Widget _buildBoutonReservation() {
     final bool isComplete =
-        selectedService != null &&
+        selectedServiceNom != null &&
         selectedCoiffeur != null &&
         selectedDate != null &&
         selectedHeure != null;
@@ -596,7 +715,7 @@ class _PriseRendezVousState extends State<PriseRendezVous> {
           ],
         ),
         content: Text(
-          "Votre rendez-vous pour $selectedService avec $selectedCoiffeur le ${DateFormat('dd/MM/yyyy', 'fr').format(selectedDate!)} à $selectedHeure a bien été enregistré.",
+          "Votre rendez-vous pour $selectedServiceNom avec $selectedCoiffeur le ${DateFormat('dd/MM/yyyy', 'fr').format(selectedDate!)} à $selectedHeure a bien été enregistré.",
           textAlign: TextAlign.center,
         ),
         actions: [
@@ -614,15 +733,6 @@ class _PriseRendezVousState extends State<PriseRendezVous> {
 }
 
 // Modèles
-class ServiceItem {
-  final String nom;
-  final String description;
-  final int prix;
-  final int duree;
-  final IconData icon;
-
-  ServiceItem(this.nom, this.description, this.prix, this.duree, this.icon);
-}
 
 class Coiffeur {
   final String nom;
